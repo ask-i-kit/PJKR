@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PJKR</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📋</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header id="header">
+  <span class="logo">PJKR</span>
+  <input id="quickAdd" type="text" placeholder="＋ Inboxに書き留め (Ctrl+I)" autocomplete="off">
+  <input id="searchBox" type="text" placeholder="横断検索 (Ctrl+F)" autocomplete="off">
+  <select id="projectSelect" title="表示する案件"></select>
+</header>
+<div class="layout">
+  <nav id="sidebar">
+    <a href="#/dashboard" data-route="dashboard">🏠 ダッシュボード</a>
+    <a href="#/home" data-route="home">📁 案件ホーム</a>
+    <a href="#/inbox" data-route="inbox">📥 Inbox <span id="inboxBadge" class="badge" hidden></span></a>
+    <a href="#/tasks" data-route="tasks">✅ タスク</a>
+    <a href="#/balls" data-route="balls">🏐 ボール <span id="ballBadge" class="badge" hidden></span></a>
+    <a href="#/holds" data-route="holds">🕓 判断保留</a>
+    <a href="#/answers" data-route="answers">💬 回答管理</a>
+    <a href="#/issues" data-route="issues">⚠ 課題・リスク</a>
+    <a href="#/report" data-route="report">📝 報告</a>
+    <a href="#/dataio" data-route="dataio">📤 データ入出力</a>
+    <a href="#/settings" data-route="settings">⚙ 設定</a>
+    <div class="nav-future">
+      <div class="nav-future-title">Phase 4</div>
+      <span>📊 ガントチャート</span>
+    </div>
+  </nav>
+  <main id="main"></main>
+</div>
+<div id="toasts"></div>
+<div id="modalWrap" hidden><div id="modal"></div></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
