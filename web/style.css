@@ -37,9 +37,6 @@ input, select, textarea { font: inherit; }
 }
 #sidebar a:hover { background: #eef2f7; }
 #sidebar a.active { background: #dbe7f5; font-weight: bold; }
-.nav-future { margin-top: 18px; padding: 8px 10px; border-top: 1px dashed #d1d5db; }
-.nav-future-title { font-size: 11px; color: #9ca3af; margin-bottom: 6px; }
-.nav-future span { display: block; font-size: 12.5px; color: #b6bcc6; padding: 3px 0; }
 #main { flex: 1; padding: 16px 20px 60px; max-width: 1100px; }
 
 /* ================= 共通部品 ================= */
@@ -197,6 +194,62 @@ a.btn { text-decoration: none; display: inline-block; }
   .report-show { border: none; padding: 0; max-width: none; }
   body { background: #fff; }
 }
+
+/* ================= ガントチャート(F5) ================= */
+.toolbar .btn.active { background: #1e3a5f; color: #fff; border-color: #1e3a5f; }
+.gantt-scroll { overflow-x: auto; position: relative; }
+.gantt-inner { min-width: 100%; }
+.gantt-hrow { display: flex; height: 24px; border-bottom: 1px solid #e5e7eb; background: #f8fafc; }
+.gantt-hrow .gantt-label { border-bottom: none; }
+.gantt-hrow .gantt-track { position: relative; }
+.gantt-month {
+  position: absolute; top: 0; height: 100%; padding: 3px 0 0 6px;
+  font-size: 11.5px; font-weight: bold; color: #374151;
+  border-left: 1px solid #d1d5db; white-space: nowrap; overflow: hidden;
+}
+.gantt-day {
+  position: absolute; top: 0; height: 100%; padding-top: 4px;
+  font-size: 10px; color: #6b7280; text-align: center; overflow: hidden; white-space: nowrap;
+}
+.gantt-day.wk { text-align: left; padding-left: 4px; border-left: 1px solid #eceff3; }
+.gantt-rows { position: relative; }
+.gantt-band { position: absolute; top: 0; bottom: 0; background: #f1f3f7; }
+.gantt-today { position: absolute; top: 0; bottom: 0; width: 2px; background: #dc2626; z-index: 3; }
+.gantt-row { display: flex; height: 28px; border-bottom: 1px solid #f1f5f9; position: relative; }
+.gantt-row.proj { height: 30px; background: rgba(238,242,247,.55); }
+.gantt-label {
+  width: 190px; flex-shrink: 0; padding: 5px 8px 0;
+  font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  position: sticky; left: 0; background: #fff; z-index: 4; border-right: 1px solid #e5e7eb;
+}
+.gantt-row.proj .gantt-label { background: #eef2f7; }
+.gantt-row .gantt-label:not(:first-child) { padding-left: 18px; }
+.gantt-track { position: relative; flex-shrink: 0; }
+.gantt-projbar {
+  position: absolute; top: 11px; height: 7px; border-radius: 4px;
+  background: #b8c8dd; z-index: 1;
+}
+.gantt-bar {
+  position: absolute; top: 6px; height: 15px; border-radius: 4px; z-index: 2;
+  background: #93b4d8; cursor: grab; touch-action: none;
+}
+.gantt-bar.dragging { opacity: .75; cursor: grabbing; z-index: 5; }
+.gantt-bar.st-doing { background: #3b82f6; }
+.gantt-bar.st-waiting { background: #f59e0b; }
+.gantt-bar.st-hold { background: #9ca3af; }
+.gantt-bar.st-done { background: #a7d7b9; }
+.gantt-bar.clip-l { border-top-left-radius: 0; border-bottom-left-radius: 0; border-left: 2px dotted #64748b; }
+.gantt-bar.clip-r { border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: 2px dotted #64748b; }
+.gantt-bar .gh { position: absolute; top: 0; bottom: 0; width: 8px; cursor: ew-resize; }
+.gantt-bar .gh.l { left: 0; }
+.gantt-bar .gh.r { right: 0; }
+.gantt-ms { position: absolute; top: 7px; z-index: 2; cursor: pointer; white-space: nowrap; }
+.ms-diamond {
+  display: inline-block; width: 10px; height: 10px; background: #7c3aed;
+  transform: rotate(45deg); margin: 0 4px 0 -5px; flex-shrink: 0;
+}
+.gantt-ms .ms-name { font-size: 10.5px; color: #5b21b6; vertical-align: 2px; }
+.gantt-ms:hover .ms-name { text-decoration: underline; }
 
 /* ================= トースト・モーダル ================= */
 #toasts { position: fixed; bottom: 16px; right: 16px; z-index: 100; }

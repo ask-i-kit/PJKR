@@ -23,7 +23,7 @@ import (
 	"pjkr/internal/store"
 )
 
-const appVersion = "0.3.0 (Phase 3)"
+const appVersion = "0.4.0 (Phase 4)"
 
 //go:embed all:web
 var webFiles embed.FS

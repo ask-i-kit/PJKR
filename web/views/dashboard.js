@@ -20,6 +20,9 @@ export function render(el) {
   const soon = tasks.filter((t) => t.due && t.due > today && t.due <= addDays(today, 3) && t.status !== 'waiting');
   const remain = over.length + dueToday.length + picks.length + nudges.length + answers.length;
   const inboxItems = col('inbox');
+  const nextMs = col('milestones')  // 直近マイルストーン(F7-8)
+    .filter((m) => (!state.projectId || m.projectId === state.projectId) && m.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
 
   const d = new Date();
   const youbi = '日月火水木金土'[d.getDay()];
@@ -65,6 +68,20 @@ export function render(el) {
       <h3>期限間近(3日以内)</h3>
       ${soon.length ? soon.sort((a, b) => a.due.localeCompare(b.due)).map((t) => row(t)).join('') : '<div class="empty">ありません</div>'}
     </div>
+
+    ${nextMs.length ? `
+    <div class="card">
+      <h3>🚩 直近のマイルストーン <a href="#/gantt" class="btn small">ガントで見る</a></h3>
+      ${nextMs.map((m) => {
+        const days = Math.round((new Date(m.date) - new Date(today)) / 86400000);
+        return `<div class="dash-item">
+          <span class="ms-diamond"></span>
+          <span class="title" style="cursor:default;text-decoration:none">${esc(m.name)}</span>
+          <span class="proj-tag">${esc(projectName(m.projectId))}</span>
+          <span class="${days <= 3 ? 'due-soon' : 'muted'}">${fmtDate(m.date)}(${days === 0 ? '今日' : `あと${days}日`})</span>
+        </div>`;
+      }).join('')}
+    </div>` : ''}
 
     <div class="card">
       <h3>Inbox(未整理 ${inboxItems.length}件) <a href="#/inbox" class="btn small">整理する</a></h3>

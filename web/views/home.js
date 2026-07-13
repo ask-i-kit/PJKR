@@ -38,6 +38,11 @@ function projectHTML(p) {
   const over = open.filter((t) => dueKind(t) === 'over');
   const next = open.filter((t) => t.due && t.due >= todayStr())
     .sort((a, b) => a.due.localeCompare(b.due)).slice(0, 3);
+  // 案件サマリの追加情報(F12-4): 直近マイルストーン・ボール状況・未クローズ課題
+  const nextMs = col('milestones').filter((m) => m.projectId === p.id && m.date >= todayStr())
+    .sort((a, b) => a.date.localeCompare(b.date))[0];
+  const waitCnt = open.filter((t) => t.status === 'waiting').length;
+  const issueCnt = col('issues').filter((i) => i.projectId === p.id && i.status !== 'done').length;
 
   const groups = {};
   for (const l of p.links || []) (groups[l.group || ''] ??= []).push(l);
@@ -56,6 +61,9 @@ function projectHTML(p) {
       <div class="muted" style="margin-top:6px">
         未完了タスク ${open.length}件
         ${over.length ? `・<span class="due-over">期限切れ${over.length}件</span>` : ''}
+        ${waitCnt ? `・🏐 返答待ち${waitCnt}件` : ''}
+        ${issueCnt ? `・<a href="#/issues">課題${issueCnt}件</a>` : ''}
+        ${nextMs ? `・🚩 <a href="#/gantt">${esc(nextMs.name)}(${fmtDate(nextMs.date)})</a>` : ''}
         ${next.length ? '・直近期限: ' + next.map((t) => `${esc(t.title)}(${fmtDate(t.due)})`).join(', ') : ''}
       </div>
     </div>

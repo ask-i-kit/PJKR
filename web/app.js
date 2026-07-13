@@ -11,11 +11,12 @@ import * as balls from './views/balls.js';
 import * as holds from './views/holds.js';
 import * as answers from './views/answers.js';
 import * as issues from './views/issues.js';
+import * as gantt from './views/gantt.js';
 import * as search from './views/search.js';
 import * as report from './views/report.js';
 import * as dataio from './views/dataio.js';
 
-const views = { dashboard, tasks, inbox, home, settings, balls, holds, answers, issues, search, report, dataio };
+const views = { dashboard, tasks, inbox, home, settings, balls, holds, answers, issues, gantt, search, report, dataio };
 
 function currentRoute() {
   const name = (location.hash || '#/dashboard').replace(/^#\//, '').split('/')[0];
