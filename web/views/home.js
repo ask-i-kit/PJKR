@@ -1,6 +1,6 @@
 // 案件ホーム: リンク集(F12)+案件メモ(F15)+サマリ+案件管理(F1)
 import { state, col, projects, byId, fmtDate, fmtDateTime, dueKind, todayStr } from '../state.js';
-import { createEntity, patchEntity, deleteEntity, openTarget } from '../actions.js';
+import { createEntity, patchEntity, patchEntities, deleteEntity, openTarget } from '../actions.js';
 import { esc, toast, openModal, closeModal } from '../ui.js';
 
 const PSTATUS = { planned: '計画中', active: '進行中', onhold: '保留', done: '完了' };
@@ -18,6 +18,7 @@ export function render(el) {
     <div class="proj-tabs">
       ${ps.map((x) => `<button class="btn ${x.id === state.homeProjectId ? 'active' : ''}" data-proj="${x.id}">${esc(x.name)}</button>`).join('')}
       <button class="btn" id="newProj">＋ 新規案件</button>
+      ${ps.length > 1 ? '<button class="btn" id="sortProj" title="案件の表示順を変更">⇅ 並び替え</button>' : ''}
     </div>
     ${p ? projectHTML(p) : '<div class="card empty">案件がありません。「＋ 新規案件」から登録してください。</div>'}`;
 
@@ -29,6 +30,7 @@ export function render(el) {
     });
   });
   el.querySelector('#newProj').addEventListener('click', () => projectDialog(null));
+  el.querySelector('#sortProj')?.addEventListener('click', sortDialog);
   if (p) bind(el, p);
 }
 
@@ -189,6 +191,48 @@ function bind(el, p) {
           break;
       }
     });
+  });
+}
+
+// 案件の表示順の並び替え。ヘッダーの案件選択・ダッシュボード・ガント等の全画面に反映される
+function sortDialog() {
+  const list = projects().map((p) => ({ id: p.id, name: p.name }));
+  const modal = openModal(`
+    <h3>案件の表示順</h3>
+    <div class="muted">↑↓で並び替えて保存してください(全画面の案件の並びに反映されます)。</div>
+    <div id="sortList" style="margin-top:8px"></div>
+    <div class="modal-actions">
+      <button class="btn" id="soCancel">キャンセル</button>
+      <button class="btn primary" id="soOk">保存</button>
+    </div>`);
+  const draw = () => {
+    modal.querySelector('#sortList').innerHTML = list.map((x, i) => `
+      <div class="dash-item">
+        <span class="title" style="cursor:default">${i + 1}. ${esc(x.name)}</span>
+        <button class="btn small" data-up="${i}" ${i === 0 ? 'disabled' : ''}>↑</button>
+        <button class="btn small" data-down="${i}" ${i === list.length - 1 ? 'disabled' : ''}>↓</button>
+      </div>`).join('');
+    modal.querySelectorAll('[data-up]').forEach((b) => b.addEventListener('click', () => {
+      const i = Number(b.dataset.up);
+      [list[i - 1], list[i]] = [list[i], list[i - 1]];
+      draw();
+    }));
+    modal.querySelectorAll('[data-down]').forEach((b) => b.addEventListener('click', () => {
+      const i = Number(b.dataset.down);
+      [list[i], list[i + 1]] = [list[i + 1], list[i]];
+      draw();
+    }));
+  };
+  draw();
+  modal.querySelector('#soCancel').addEventListener('click', closeModal);
+  modal.querySelector('#soOk').addEventListener('click', async () => {
+    closeModal();
+    const changes = list
+      .map((x, i) => ({ id: x.id, fields: { order: i } }))
+      .filter((c) => byId('projects', c.id).order !== c.fields.order);
+    if (!changes.length) return;
+    await patchEntities('projects', changes, '案件の並び替え');
+    toast('表示順を保存しました(Ctrl+Zで戻せます)');
   });
 }
 

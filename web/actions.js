@@ -69,6 +69,25 @@ export async function patchEntity(entity, id, fields, label) {
   await refresh();
 }
 
+// 複数エンティティの部分更新を1回のCtrl+Zでまとめて取り消せるようにする(案件の並び替え等)
+export async function patchEntities(entity, changes, label) {
+  const befores = [];
+  for (const { id, fields } of changes) {
+    const { before } = await api.patch(`/api/${entity}/${id}`, fields);
+    befores.push({ id, before });
+  }
+  pushUndo({
+    label,
+    undo: async () => {
+      for (const { id, before } of befores.slice().reverse()) await api.patch(`/api/${entity}/${id}`, before);
+    },
+    redo: async () => {
+      for (const { id, fields } of changes) await api.patch(`/api/${entity}/${id}`, fields);
+    },
+  });
+  await refresh();
+}
+
 export async function deleteEntity(entity, id, label) {
   const { removed } = await api.del(`/api/${entity}/${id}`);
   pushUndo({

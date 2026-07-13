@@ -25,7 +25,9 @@ export async function reload() {
 export const col = (key) => state.data?.[key] ?? [];
 export const byId = (key, id) => col(key).find((x) => x.id === id);
 
-export const projects = () => col('projects').filter((p) => !p.archived);
+// 表示順(order)の昇順。未設定は末尾(作成順を維持。sortは安定ソート)
+export const projects = () => col('projects').filter((p) => !p.archived)
+  .sort((a, b) => (a.order ?? 1e9) - (b.order ?? 1e9));
 export const projectName = (id) => byId('projects', id)?.name ?? '(案件なし)';
 export const contactName = (id) => (id ? (byId('contacts', id)?.name ?? '?') : '自分');
 
